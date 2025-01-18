@@ -26,7 +26,7 @@ Compilation du Serveur
 
 Pour compiler le serveur, utilisez la commande suivante :
 
-  gcc Server2.c -o Server2
+- gcc Server2.c -o Server2
 
 Compilation du Client
 
