@@ -3,7 +3,7 @@
 Ce projet est une implémentation d'un jeu d'échecs en réseau, où deux joueurs peuvent s'affronter à distance. Le jeu est composé d'un serveur (Server2.c) et d'un client (Client2.c). Le serveur gère la logique du jeu et la communication entre les deux clients, tandis que chaque client gère l'interface graphique et les interactions utilisateur.
 
 
-Prérequis
+#Prérequis
 
 Pour compiler et exécuter ce projet, vous aurez besoin des éléments suivants :
 
@@ -12,7 +12,7 @@ Pour compiler et exécuter ce projet, vous aurez besoin des éléments suivants 
 - Bibliothèques réseau : Les bibliothèques standard pour la gestion des sockets (arpa/inet.h, sys/socket.h, etc.).
 
 
-Installation des dépendances
+#Installation des dépendances
 
 Sur une distribution Linux basée sur Debian (comme Ubuntu), vous pouvez installer les dépendances nécessaires avec les commandes suivantes :
 
@@ -20,24 +20,24 @@ Sur une distribution Linux basée sur Debian (comme Ubuntu), vous pouvez install
 - sudo apt install build-essential libsdl2-dev libsdl2-image-dev
 
 
-Compilation
+#Compilation
 
-Compilation du Serveur
+##Compilation du Serveur
 
 Pour compiler le serveur, utilisez la commande suivante :
 
 - gcc Server2.c -o Server2
 
-Compilation du Client
+##Compilation du Client
 
 Pour compiler le client, utilisez la commande suivante :
 
 - gcc Client2.c -o Client2 -lSDL2 -lSDL2_image
 
 
-Exécution
+#Exécution
 
-Lancement du Serveur
+##Lancement du Serveur
 
 Lancez le serveur en exécutant la commande suivante :
 
@@ -45,7 +45,7 @@ Lancez le serveur en exécutant la commande suivante :
 
 Le serveur écoutera sur le port 30000 et attendra que deux clients se connectent.
 
-Lancement des Clients
+##Lancement des Clients
 
 Lancez le premier client en exécutant simplement :
 
@@ -60,41 +60,37 @@ Lancez le deuxième client de la même manière :
 Le deuxième client se connectera au serveur et le jeu commencera.
 
 
-Fonctionnement du Jeu
+#Fonctionnement du Jeu
 
 Le client 1 joue avec les pièces blanches et le client 2 joue avec les pièces noires. Les joueurs alternent les tours pour déplacer leurs pièces. Le serveur gère la synchronisation des mouvements entre les deux clients.
 
 
-Règles du Jeu
+#Règles du Jeu
 
 Le jeu suit les règles classiques des échecs, y compris les mouvements spéciaux comme le roque et la prise en passant. Les joueurs peuvent promouvoir leurs pions lorsqu'ils atteignent la dernière rangée.
 
 
-Gestion des Erreurs
+#Gestion des Erreurs
 
 Si un client se déconnecte, le serveur en informe l'autre client et met fin à la partie.
 
 Si le serveur rencontre une erreur lors de la communication, il ferme les connexions et termine proprement.
 
 
-Nettoyage
+#Nettoyage
 
 Après la fin de la partie, le serveur et les clients ferment leurs sockets et libèrent les ressources.
 
 
-Améliorations Possibles
+#Améliorations Possibles
 
-Interface graphique améliorée : Ajouter des animations, des effets sonores, etc.
-
-
-Gestion des erreurs réseau : Améliorer la gestion des déconnexions inattendues.
-
-Mode spectateur : Permettre à des observateurs de regarder la partie en cours.
-
-Configuration de l'adresse IP du serveur : Permettre à l'utilisateur de spécifier l'adresse IP du serveur via des arguments en ligne de commande ou un fichier de configuration.
+- Interface graphique améliorée : Ajouter des animations, des effets sonores, etc.
+- Gestion des erreurs réseau : Améliorer la gestion des déconnexions inattendues.
+- Mode spectateur : Permettre à des observateurs de regarder la partie en cours.
+- Configuration de l'adresse IP du serveur : Permettre à l'utilisateur de spécifier l'adresse IP du serveur via des arguments en ligne de commande ou un fichier de configuration.
 
 
-Auteurs
+#Auteurs
 
 Ce projet a été développé par Adrien PANGUEL et Mohamed SAAD dans le cadre d'un projet personnel ou académique.
 
