@@ -7,9 +7,9 @@ Prérequis
 
 Pour compiler et exécuter ce projet, vous aurez besoin des éléments suivants :
 
-Compilateur C : GCC ou un autre compilateur C.
-Bibliothèques SDL2 et SDL2_image : Pour l'interface graphique.
-Bibliothèques réseau : Les bibliothèques standard pour la gestion des sockets (arpa/inet.h, sys/socket.h, etc.).
+- Compilateur C : GCC ou un autre compilateur C.
+- Bibliothèques SDL2 et SDL2_image : Pour l'interface graphique.
+- Bibliothèques réseau : Les bibliothèques standard pour la gestion des sockets (arpa/inet.h, sys/socket.h, etc.).
 
 
 Installation des dépendances
