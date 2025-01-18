@@ -1,4 +1,4 @@
-#Jeu d'Échecs en Réseau
+###Jeu d'Échecs en Réseau
 
 Ce projet est une implémentation d'un jeu d'échecs en réseau, où deux joueurs peuvent s'affronter à distance. Le jeu est composé d'un serveur (Server2.c) et d'un client (Client2.c). Le serveur gère la logique du jeu et la communication entre les deux clients, tandis que chaque client gère l'interface graphique et les interactions utilisateur.
 
