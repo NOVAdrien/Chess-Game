@@ -16,8 +16,8 @@ Installation des dépendances
 
 Sur une distribution Linux basée sur Debian (comme Ubuntu), vous pouvez installer les dépendances nécessaires avec les commandes suivantes :
 
-sudo apt update
-sudo apt install build-essential libsdl2-dev libsdl2-image-dev
+  sudo apt update
+  sudo apt install build-essential libsdl2-dev libsdl2-image-dev
 
 
 Compilation
@@ -26,13 +26,13 @@ Compilation du Serveur
 
 Pour compiler le serveur, utilisez la commande suivante :
 
-gcc Server2.c -o Server2
+  gcc Server2.c -o Server2
 
 Compilation du Client
 
 Pour compiler le client, utilisez la commande suivante :
 
-gcc Client2.c -o Client2 -lSDL2 -lSDL2_image
+  gcc Client2.c -o Client2 -lSDL2 -lSDL2_image
 
 
 Exécution
@@ -41,7 +41,7 @@ Lancement du Serveur
 
 Lancez le serveur en exécutant la commande suivante :
 
-./Server2
+  ./Server2
 
 Le serveur écoutera sur le port 30000 et attendra que deux clients se connectent.
 
@@ -49,13 +49,13 @@ Lancement des Clients
 
 Lancez le premier client en exécutant simplement :
 
-./Client2
+  ./Client2
 
 Le client se connectera automatiquement au serveur en utilisant l'adresse IP codée en dur dans le fichier Client2.c (dans ce cas, 172.26.136.239).
 
 Lancez le deuxième client de la même manière :
 
-./Client2
+  ./Client2
 
 Le deuxième client se connectera au serveur et le jeu commencera.
 
