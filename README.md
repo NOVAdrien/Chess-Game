@@ -1,6 +1,6 @@
 Jeu d'Échecs en Réseau
 
-Ce projet est une implémentation d'un jeu d'échecs en réseau, où deux joueurs peuvent s'affronter à distance. Le jeu est composé d'un serveur (Server2.c) et d'un client (Client2.c). Le serveur gère la logique du jeu et la communication entre les deux clients, tandis que chaque client gère l'interface graphique et les interactions utilisateur.
+Ce projet est une implémentation d'un jeu d'échecs en réseau, où deux joueurs peuvent s'affronter à distance. Le jeu est composé d'un code serveur et d'un code client qui permettent la connexion via TCP (Transmission Control Protocol) ou UDP (User Datagram Protocol) de deux joueurs. Le serveur gère la logique du jeu et la communication entre les deux clients, tandis que chaque client gère l'interface graphique et les interactions utilisateur.
 
 
 Prérequis
@@ -9,7 +9,7 @@ Pour compiler et exécuter ce projet, vous aurez besoin des éléments suivants 
 
 - Compilateur C : GCC ou un autre compilateur C.
 - Bibliothèques SDL2 et SDL2_image : Pour l'interface graphique.
-- Bibliothèques réseau : Les bibliothèques standard pour la gestion des sockets (arpa/inet.h, sys/socket.h, etc.).
+- Bibliothèques réseau : Les bibliothèques standard pour la gestion des sockets (arpa/inet.h, sys/socket.h).
 
 
 Installation des dépendances
@@ -19,22 +19,24 @@ Sur une distribution Linux basée sur Debian (comme Ubuntu), vous pouvez install
 - sudo apt update
 - sudo apt install build-essential libsdl2-dev libsdl2-image-dev
 
-Vous avez a votre disposition deux codes que vous pouvez installer. L'un utilise le protocole TCP (ClientTCP.c et ServerTCP.c) et l'autre utilise le protocole UDP (ClientUDP.c et ServerUDP.c).
+Vous avez à votre disposition deux codes que vous pouvez installer. L'un utilise le protocole TCP (ClientTCP.c et ServerTCP.c) et l'autre utilise le protocole UDP (ClientUDP.c et ServerUDP.c).
 
 
 Compilation
 
 Compilation du Serveur
 
-Pour compiler le serveur, utilisez la commande suivante :
+Pour compiler le serveur, utilisez une des commandes suivantes selon le type de connexion TCP ou UDP utilisé :
 
-- gcc Server2.c -o Server2
+- gcc ServerUDP.c -o serverudp
+- gcc ServerTCP.c -o servertcp
 
 Compilation du Client
 
 Pour compiler le client, utilisez la commande suivante :
 
-- gcc Client2.c -o Client2 -lSDL2 -lSDL2_image
+- gcc ClientUDP.c -o clientudp -lSDL2 -lSDL2_image
+- gcc ClientTCP.c -o clienttcp -lSDL2 -lSDL2_image
 
 
 Exécution
@@ -43,7 +45,8 @@ Lancement du Serveur
 
 Lancez le serveur en exécutant la commande suivante :
 
-- ./Server2
+- ./servertcp
+- ./serverudp
 
 Le serveur écoutera sur le port 30000 et attendra que deux clients se connectent.
 
@@ -51,13 +54,15 @@ Lancement des Clients
 
 Lancez le premier client en exécutant simplement :
 
-- ./Client2
+- ./clientudp
+- ./clienttcp
 
-Le client se connectera automatiquement au serveur en utilisant l'adresse IPV4 codée en dur dans le fichier Client2.c. Pour trouver cette adresse IP, il faut entrer la commande ifconfig dans le terminal de la machine où le serveur est lancé (dans notre cas "172.26.136.239", et l'insérer dans le code client dans le main à la ligne "const char *server_ip = "172.26.136.239";"
+Le client se connectera automatiquement au serveur en utilisant l'adresse IPV4 codée en dur dans le fichier client. Pour trouver cette adresse IP, il faut entrer la commande ifconfig dans le terminal de la machine où le serveur est lancé (dans notre cas "172.26.136.239"), et l'insérer dans le code client dans le main à la ligne "const char *server_ip = "172.26.136.239";".
 
 Lancez le deuxième client de la même manière :
 
-./Client2
+- ./clientudp
+- ./clienttcp
 
 Le deuxième client se connectera au serveur et le jeu commencera.
 
@@ -74,9 +79,7 @@ Le jeu suit les règles classiques des échecs, y compris les mouvements spécia
 
 Gestion des Erreurs
 
-Si un client se déconnecte, le serveur en informe l'autre client et met fin à la partie.
-
-Si le serveur rencontre une erreur lors de la communication, il ferme les connexions et termine proprement.
+Si un client se déconnecte, le serveur en informe l'autre client et met fin à la partie. Si le serveur rencontre une erreur lors de la communication, il ferme les connexions et termine proprement.
 
 
 Nettoyage
@@ -86,15 +89,20 @@ Après la fin de la partie, le serveur et les clients ferment leurs sockets et l
 
 Améliorations Possibles
 
-- Interface graphique améliorée : Ajouter des animations, des effets sonores, etc.
+- Interface graphique améliorée : Ajouter des animations, des effets sonores.
+
 - Gestion des erreurs réseau : Améliorer la gestion des déconnexions inattendues.
+
 - Mode spectateur : Permettre à des observateurs de regarder la partie en cours.
-- Configuration de l'adresse IP du serveur : Permettre à l'utilisateur de spécifier l'adresse IP du serveur via des arguments en ligne de commande ou un fichier de configuration.
+
+- Autre mode de jeu : Permettre à un seul client de jouer contre l'ordinateur aux échecs.
+
+- Challenge dans le jeu : Ajouter un temps de jeu limité pour chaque joueur.
 
 
 Auteurs
 
-Ce projet a été développé par Adrien PANGUEL et Mohamed SaaD EL ABBADI dans le cadre d'un projet académique.
+Ce projet a été développé par Adrien PANGUEL et Mohamed Saad EL ABBADI dans le cadre d'un projet académique.
 
 Licence
 
