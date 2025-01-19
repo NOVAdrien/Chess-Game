@@ -86,14 +86,10 @@ Après la fin de la partie, le serveur et les clients ferment leurs sockets et l
 
 Améliorations Possibles
 
-Interface graphique améliorée : Ajouter des animations, des effets sonores, etc.
-
-
-Gestion des erreurs réseau : Améliorer la gestion des déconnexions inattendues.
-
-Mode spectateur : Permettre à des observateurs de regarder la partie en cours.
-
-Configuration de l'adresse IP du serveur : Permettre à l'utilisateur de spécifier l'adresse IP du serveur via des arguments en ligne de commande ou un fichier de configuration.
+- Interface graphique améliorée : Ajouter des animations, des effets sonores, etc.
+- Gestion des erreurs réseau : Améliorer la gestion des déconnexions inattendues.
+- Mode spectateur : Permettre à des observateurs de regarder la partie en cours.
+- Configuration de l'adresse IP du serveur : Permettre à l'utilisateur de spécifier l'adresse IP du serveur via des arguments en ligne de commande ou un fichier de configuration.
 
 
 Auteurs
