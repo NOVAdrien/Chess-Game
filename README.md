@@ -33,7 +33,7 @@ Pour compiler le serveur, utilisez une des commandes suivantes selon le type de 
 
 Compilation du Client
 
-Pour compiler le client, utilisez la commande suivante :
+Pour compiler le client, utilisez une des commandes suivantes selon le type de connexion TCP ou UDP utilisé :
 
 - gcc ClientUDP.c -o clientudp -lSDL2 -lSDL2_image
 - gcc ClientTCP.c -o clienttcp -lSDL2 -lSDL2_image
@@ -43,7 +43,7 @@ Exécution
 
 Lancement du Serveur
 
-Lancez le serveur en exécutant la commande suivante :
+Lancez le serveur en exécutant une des commandes suivantes selon le type de connexion TCP ou UDP utilisé :
 
 - ./servertcp
 - ./serverudp
@@ -52,7 +52,7 @@ Le serveur écoutera sur le port 30000 et attendra que deux clients se connecten
 
 Lancement des Clients
 
-Lancez le premier client en exécutant simplement :
+Lancez le premier client en exécutant une des commandes suivantes selon le type de connexion TCP ou UDP utilisé :
 
 - ./clientudp
 - ./clienttcp
