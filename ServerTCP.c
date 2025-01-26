@@ -11,7 +11,7 @@
 #define PORT 30000
 #define BOARD_SIZE 8
 
-// Structure des données à échanger entre clients et serveur
+// Structure des données échangées entre clients et serveur
 typedef struct {
     int board[BOARD_SIZE][BOARD_SIZE];
     bool quit;
@@ -109,10 +109,12 @@ void handle_clients(int client1_socket, int client2_socket) {
     // Initialisation de la structure de données en début de partie
     init_game_state();
 
-    // Envoi de l'état initial du jeu aux deux clients
     printf("game_state.is_white_turn = %d\n", game_state.is_white_turn);
+
+    // Envoi de l'état initial du jeu aux deux clients
     send_game_state_to_client(client1_socket);
     send_game_state_to_client(client2_socket);
+
     printf("Game_state envoyée aux deux client\n");
     printf("Game over = %d\n", game_state.game_over);
 
@@ -124,11 +126,13 @@ void handle_clients(int client1_socket, int client2_socket) {
     while (1) {
         // Reception des données du joueur à qui c'est le tour de jouer
         receive_game_state_from_client(client_socket[player_socket]);
+
         printf("J'ai reçu le Game_state du joueur qui vient de jouer\n");
         printf("Game over = %d\n", game_state.game_over);
 
         // Envoi des données au joueur à qui c'est le tour de jouer
         send_game_state_to_client(client_socket[other_player_socket]);
+
         printf("J'ai envoyé le Game_state au joueur à qui c'est le tour de jouer\n");
         printf("Game over = %d\n", game_state.game_over);
 
@@ -139,23 +143,28 @@ void handle_clients(int client1_socket, int client2_socket) {
         // Si game_over == True
         if (game_state.game_over == true) {
             receive_game_state_from_client(client_socket[other_player_socket]);
-            printf("J'ai reçu le Game_state du joueur qui a mis Game over\n");
             int restart_choice_other_player_socket = game_state.restart_choice;
 
+            printf("J'ai reçu le Game_state du joueur qui a mis Game over\n");
+
             receive_game_state_from_client(client_socket[player_socket]);
-            printf("J'ai reçu le Game_state du joueur qui est mis Game over\n");
             int restart_choice_player_socket = game_state.restart_choice;
 
-            // Les deux joueurs souhaitent rejouer une partie
+            printf("J'ai reçu le Game_state du joueur qui est mis Game over\n");
+
             printf("restart_choice_player_socket = %d, restart_choice_other_player_socket = %d\n", restart_choice_player_socket, restart_choice_other_player_socket);
+
+            // Les deux joueurs souhaitent rejouer une partie
             if (restart_choice_player_socket == 1 && restart_choice_other_player_socket == 1) {
                 // Réinitialisation de la structure de données en début de partie
                 init_game_state();
 
-                // Envoi de l'état réinitialisé du jeu aux deux clients
                 printf("game_state.is_white_turn = %d\n", game_state.is_white_turn);
+                
+                // Envoi de l'état réinitialisé du jeu aux deux clients
                 send_game_state_to_client(client1_socket);
                 send_game_state_to_client(client2_socket);
+
                 printf("Game_state envoyée aux deux client\n");
 
                 // Changement du tour de joueur pour bien recommencer une partie
@@ -164,11 +173,15 @@ void handle_clients(int client1_socket, int client2_socket) {
             } else {
                 game_state.game_over = false;
                 game_state.quit = true;
-                // Envoi de l'état réinitialisé du jeu aux deux clients
+
                 printf("game_state.is_white_turn = %d\n", game_state.is_white_turn);
+
+                // Envoi de l'état réinitialisé du jeu aux deux clients
                 send_game_state_to_client(client1_socket);
                 send_game_state_to_client(client2_socket);
+
                 printf("Game_state envoyée aux deux client\n");
+                
                 break;
             }
         }
@@ -177,6 +190,7 @@ void handle_clients(int client1_socket, int client2_socket) {
 
 // Fonction principale du serveur
 void start_server() {
+
     // Déclaration des variables
     int server_socket, client_socket[2];
     struct sockaddr_in server_addr, client_addr;
@@ -223,10 +237,12 @@ void start_server() {
             close(server_socket);
             exit(EXIT_FAILURE);
         }
+
         printf("Client %d connecté\n", i+1);
 
-        // Envoi de l'identifiant 1 ou 2 aux clients
         printf("I'm sending the id to the clients\n");
+        
+        // Envoi de l'identifiant 1 ou 2 aux clients
         int client_id = i;
         if (send(client_socket[i], &client_id, sizeof(client_id), 0) < 0) {
             perror("Erreur lors de l'envoi de l'identifiant du client");
@@ -234,6 +250,7 @@ void start_server() {
             close(server_socket);
             exit(EXIT_FAILURE);
         }
+        
         printf("Identifiant %d envoyé au client\n", client_id);
     }
 
