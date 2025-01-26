@@ -15,7 +15,7 @@
 
 // Variables globales
 
-// Variable pour gérer le tour de jeu
+// Variables pour gérer le tour de jeu
 int client_id;
 bool play = false;
 bool simul = false;
@@ -32,14 +32,7 @@ bool black_king_moved = false;
 int selected_piece_x = -1;
 int selected_piece_y = -1;
 
-// Variables pour prise en passant
-int en_passant_blanc = 100;
-int en_passant_noir = 100;
-bool capture_en_passant_blanc = false;
-bool capture_en_passant_noir = false;
-
 // Tableau et textures pour interface graphique
-//int board[BOARD_SIZE][BOARD_SIZE]; 
 SDL_Texture* white_pawn, * white_rook, * white_knight, * white_bishop, * white_king, * white_queen;
 SDL_Texture* black_pawn, * black_rook, * black_knight, * black_bishop, * black_king, * black_queen;
 
@@ -76,20 +69,21 @@ void promote_pawn(int row, int col, int piece, SDL_Renderer *renderer);
 bool is_valid_move(int start_row, int start_col, int end_row, int end_col);
 bool is_king_in_check();
 bool is_checkmate();
-bool is_king_in_check_after_move(int start_row, int start_col, int end_row, int end_col);
+void handle_game_over(SDL_Renderer *renderer);
 bool is_castling_valid(int piece, int end_col);
 void handle_mouse_click(int x, int y, SDL_Renderer *renderer);
 void load_all_textures(SDL_Renderer* renderer);
 void draw_chessboard(SDL_Renderer *renderer);
 void draw_piece(SDL_Renderer *renderer, SDL_Texture *texture, int row, int col);
+void draw_pieces(SDL_Renderer *renderer);
 void reverse_board(int board[BOARD_SIZE][BOARD_SIZE]);
-int receive_board_from_server(int client_socket);
-void send_board_to_server(int client_socket);
+int receive_game_state_from_server(int client_socket);
+void send_game_state_to_server(int client_socket);
 void start_client(const char *server_ip);
 
 // Fonction principale
 int main() {
-    const char *server_ip = "172.26.136.239"; // Adresse IP de la machine qui héberge le serveur ou utiliser "127.0.0.1" au sein même de la machine
+    const char *server_ip = "172.26.136.239"; // Adresse IP de la machine qui héberge le serveur ou "127.0.0.1" sur la même machine
     start_client(server_ip);
     return 0;
 }
@@ -118,6 +112,7 @@ bool is_horizontal_path_clear(int start_row, int start_col, int end_col) {
 
     // On fait se déplacer la pièce d'une case dans la bonne direction 
     int col = start_col + col_direction;
+
     // Puis on re-test s'il y a une pièce qui bloque le déplacement jusqu'à ce que la pièce arrive à destination
     while (col != end_col) {
         if (game_state.board[start_row][col] != 0) {
@@ -251,15 +246,16 @@ bool is_valid_pawn_move(int start_row, int start_col, int end_row, int end_col, 
         if (end_row - start_row == -1) {
             return true; // Une case
         } else if (end_row - start_row == -2) {
-            if (start_row == 6 && game_state.board[5][start_col] == 0)
-            if (piece == 1) {
-                game_state.en_passant_blanc = end_col;
-                //printf("en_passant_blanc = %d\n", game_state.en_passant_blanc);
-                return true; // Premier mouvement du pion blanc de 2 cases
-            } else if (piece == 7) {
-                game_state.en_passant_noir = end_col;
-                //printf("en_passant_noir = %d\n", game_state.en_passant_noir);
-                return true; // Premier mouvement du pion noir de 2 cases
+            if (start_row == 6 && game_state.board[5][start_col] == 0) {
+                if (piece == 1) {
+                    game_state.en_passant_blanc = end_col;
+                    //printf("en_passant_blanc = %d\n", game_state.en_passant_blanc);
+                    return true; // Premier mouvement du pion blanc de 2 cases
+                } else if (piece == 7) {
+                    game_state.en_passant_noir = end_col;
+                    //printf("en_passant_noir = %d\n", game_state.en_passant_noir);
+                    return true; // Premier mouvement du pion noir de 2 cases
+                }
             }
         }
     }
@@ -272,13 +268,14 @@ bool is_valid_pawn_move(int start_row, int start_col, int end_row, int end_col, 
     }
 
     // Capturer en passant
-    if (game_state.board[end_row][end_col] == 0 && start_row == 3 && end_row == 2 && abs(end_col - start_col) == 1)
-    if (piece == 1 && end_col == game_state.en_passant_noir) {
-        game_state.board[start_row][end_col] = 0;
-        return true;
-    } else if (piece == 7 && end_col == game_state.en_passant_blanc) {
-        game_state.board[start_row][end_col] = 0;
-        return true;
+    if (game_state.board[end_row][end_col] == 0 && start_row == 3 && end_row == 2 && abs(end_col - start_col) == 1) {
+        if (piece == 1 && end_col == game_state.en_passant_noir) {
+            game_state.board[start_row][end_col] = 0;
+            return true;
+        } else if (piece == 7 && end_col == game_state.en_passant_blanc) {
+            game_state.board[start_row][end_col] = 0;
+            return true;
+        }
     }
     return false; // Le mouvement n'est pas possible pour un pion
 }
@@ -406,12 +403,10 @@ bool is_valid_move(int start_row, int start_col, int end_row, int end_col) {
 // Fonction pour vérifier si le roi est en échec
 bool is_king_in_check() {
     // Choix du roi de la couleur du joueur dont c'est le tour de jouer
-    int king_row;
-    int king_col;
-    int king_piece;
+    int king_row, king_col, king_piece;
     if (game_state.is_white_turn) {
         king_piece = 6;
-    } else if (!game_state.is_white_turn) {
+    } else {
         king_piece = 12;
     }
     printf("king_piece = %d\n", king_piece);
@@ -429,13 +424,13 @@ bool is_king_in_check() {
     printf("King_piece in %d %d\n", king_row, king_col);
 
     // Vérification si une pièce adverse peut atteindre le roi sachant qu'un déplacement a été proposé
-    for (int row = 0; row < BOARD_SIZE; row++) {
-        for (int col = 0; col < BOARD_SIZE; col++) {
+    for (int start_row = 0; start_row < BOARD_SIZE; start_row++) {
+        for (int start_col = 0; start_col < BOARD_SIZE; start_col++) {
             // On regarde pour chaque pièce adverse sur l'échiquier si elle peut atteindre le roi après le déplacement proposé
-            if ((game_state.is_white_turn && game_state.board[row][col] >= 7 && game_state.board[row][col] <= 12) ||
-               (!game_state.is_white_turn && game_state.board[row][col] <= 6 && game_state.board[row][col] >= 1)) {
-                if (is_valid_move(row, col, king_row, king_col)) {
-                    printf("This piece %d can capture king from %d %d\n", game_state.board[row][col], row, col);
+            if ((game_state.is_white_turn && game_state.board[start_row][start_col] >= 7 && game_state.board[start_row][start_col] <= 12) ||
+               (!game_state.is_white_turn && game_state.board[start_row][start_col] >= 1 && game_state.board[start_row][start_col] <= 6)) {
+                if (is_valid_move(start_row, start_col, king_row, king_col)) {
+                    printf("This piece %d can capture king from %d %d to %d %d\n", game_state.board[start_row][start_col], start_row, start_col, king_row, king_col);
                     return true; // Le roi est en échec
                 }
             }
@@ -447,35 +442,34 @@ bool is_king_in_check() {
 
 // Fonction pour vérifier si le roi est échec et mat
 bool is_checkmate() {
-    printf("test du checkmate !\n");
+    printf("Test du checkmate !\n");
     if (!is_king_in_check()) {
-        printf("King not in check\n");
+        printf("King is not in check so there is no checkmate\n");
         return false; // Pas d'échec, donc pas d'échec et mat
     }
     printf("King is in check\n"); // Ok jusque-là
 
     // Simulation de tous les mouvements possibles
-    for (int row = 0; row < BOARD_SIZE; row++) {
-        for (int col = 0; col < BOARD_SIZE; col++) {
-            if ((game_state.is_white_turn && game_state.board[row][col] <= 6 && game_state.board[row][col] >= 1) ||
-               (!game_state.is_white_turn && game_state.board[row][col] >= 7 && game_state.board[row][col] <= 12)) {
-                for (int target_row = 0; target_row < BOARD_SIZE; target_row++) {
-                    for (int target_col = 0; target_col < BOARD_SIZE; target_col++) {
-                        if (is_valid_move(row, col, target_row, target_col)) {
+    for (int start_row = 0; start_row < BOARD_SIZE; start_row++) {
+        for (int start_col = 0; start_col < BOARD_SIZE; start_col++) {
+            if ((game_state.is_white_turn && game_state.board[start_row][start_col] >= 1 && game_state.board[start_row][start_col] <= 6) ||
+               (!game_state.is_white_turn && game_state.board[start_row][start_col] >= 7 && game_state.board[start_row][start_col] <= 12)) {
+                for (int end_row = 0; end_row < BOARD_SIZE; end_row++) {
+                    for (int end_col = 0; end_col < BOARD_SIZE; end_col++) {
+                        if (is_valid_move(start_row, start_col, end_row, end_col)) {
                             // Simulation du déplacement
-                            int temp_piece = game_state.board[target_row][target_col];
-                            int piece = game_state.board[row][col];
-                            game_state.board[row][col] = 0;
-                            game_state.board[target_row][target_col] = piece;
+                            int temp_piece = game_state.board[end_row][end_col];
+                            int piece = game_state.board[start_row][start_col];
+                            game_state.board[start_row][start_col] = 0;
+                            game_state.board[end_row][end_col] = piece;
 
                             bool still_in_check = is_king_in_check();
 
                             // Annulation du mouvement
-                            game_state.board[row][col] = piece;
-                            game_state.board[target_row][target_col] = temp_piece;
+                            game_state.board[start_row][start_col] = piece;
+                            game_state.board[end_row][end_col] = temp_piece;
 
                             if (!still_in_check) {
-                                //printf("piece = %d, row = %d, col = %d, target_row = %d, target_col = %d\n", piece, row, col, target_row, target_col);
                                 return false; // Mouvement possible pour sortir de l'échec
                             }
                         }
@@ -489,6 +483,7 @@ bool is_checkmate() {
 
 // Demander aux clients de rejouer une partie ou de quitter
 void handle_game_over(SDL_Renderer *renderer) {
+    printf("open handle game over\n");
     SDL_Color text_color = {255, 255, 255, 255}; // Couleur du texte (blanc)
     SDL_Color bg_color = {0, 0, 0, 255}; // Couleur de fond (noir)
     TTF_Font *font = TTF_OpenFont("arial.ttf", 24); // Charger une police (assurez-vous d'avoir une police TTF)
@@ -557,22 +552,6 @@ void handle_game_over(SDL_Renderer *renderer) {
     TTF_CloseFont(font);
 }
 
-// Fonction pour simuler un déplacement et vérifier si le roi est en échec
-bool is_king_in_check_after_move(int start_row, int start_col, int end_row, int end_col) {
-    // Simulation du déplacement
-    int temp_piece = game_state.board[end_row][end_col];
-    game_state.board[end_row][end_col] = game_state.board[start_row][start_col];
-    game_state.board[start_row][start_col] = 0;
-
-    bool in_check = is_king_in_check();
-
-    // Restauration de l'état initial
-    game_state.board[start_row][start_col] = game_state.board[end_row][end_col];
-    game_state.board[end_row][end_col] = temp_piece;
-
-    return in_check;
-}
-
 // Fonction pour vérifier si le roque est valide
 bool is_castling_valid(int piece, int end_col) {
     // Vérification que le roi n'est pas en échec avant de roquer
@@ -600,16 +579,13 @@ bool is_castling_valid(int piece, int end_col) {
                         white_rook2_moved = true;
                         simul = true;
                         return true;
-                    } else {
-                        game_state.board[start_row][6] = 0; // Supprimer le roi de sa position finale
-                        game_state.board[start_row][4] = 6; // Replace le roi à sa position initiale
-                        return false;
                     }
-                } else {
-                    game_state.board[start_row][5] = 0; // Supprimer le roi de sa position intermédiaire
-                    game_state.board[start_row][4] = 6; // Replace le roi à sa position initiale
-                    return false;
                 }
+                
+                // Annuler le mouvement simulé
+                game_state.board[start_row][4] = 6;
+                game_state.board[start_row][5] = 0;
+                game_state.board[start_row][6] = 0;
             }
         // Roque long (roi vers la gauche)
         } else if (end_col == 2 && game_state.board[start_row][0] == 2 && !white_rook1_moved) {
@@ -628,16 +604,13 @@ bool is_castling_valid(int piece, int end_col) {
                         white_rook1_moved = true;
                         simul = true;
                         return true;
-                    } else {
-                        game_state.board[start_row][2] = 0; // Supprimer le roi de sa position finale
-                        game_state.board[start_row][4] = 6; // Replace le roi à sa position initiale
-                        return false;
                     }
-                } else {
-                    game_state.board[start_row][3] = 0; // Supprimer le roi de sa position intermédiaire
-                    game_state.board[start_row][4] = 6; // Replace le roi à sa position initiale
-                    return false;
                 }
+
+                // Annuler le mouvement simulé
+                game_state.board[start_row][4] = 6;
+                game_state.board[start_row][3] = 0;
+                game_state.board[start_row][2] = 0;
             }
         }
     } else if (piece == 12 && !black_king_moved) { // Roi blanc
@@ -658,14 +631,13 @@ bool is_castling_valid(int piece, int end_col) {
                         black_rook2_moved = true;
                         simul = true;
                         return true;
-                    } else {
-                        game_state.board[start_row][6] = 0; // Supprimer le roi de sa position finale
-                        game_state.board[start_row][4] = 12; // Replace le roi à sa position initiale
                     }
-                } else {
-                    game_state.board[start_row][5] = 0; // Supprimer le roi de sa position intermédiaire
-                    game_state.board[start_row][4] = 12; // Replace le roi à sa position initiale
                 }
+                
+                // Annuler le mouvement simulé
+                game_state.board[start_row][4] = 12;
+                game_state.board[start_row][5] = 0;
+                game_state.board[start_row][6] = 0;
             }
         // Roque long (roi vers la gauche)
         } else if (end_col == 2 && game_state.board[start_row][0] == 8 && !black_rook1_moved) {
@@ -684,14 +656,13 @@ bool is_castling_valid(int piece, int end_col) {
                         black_rook1_moved = true;
                         simul = true;
                         return true;
-                    } else {
-                        game_state.board[start_row][2] = 0; // Supprimer le roi de sa position finale
-                        game_state.board[start_row][4] = 12; // Replace le roi à sa position initiale
                     }
-                } else {
-                    game_state.board[start_row][3] = 0; // Supprimer le roi de sa position intermédiaire
-                    game_state.board[start_row][4] = 12; // Replace le roi à sa position initiale
                 }
+
+                // Annuler le mouvement simulé
+                game_state.board[start_row][4] = 12;
+                game_state.board[start_row][3] = 0;
+                game_state.board[start_row][2] = 0;
             }
         }
     }
@@ -720,15 +691,15 @@ void handle_mouse_click(int x, int y, SDL_Renderer *renderer) {
         if (game_state.board[row][col] != 0) {
             printf("Case non_vide\n");
             printf("is_white_turn = %d\n", game_state.is_white_turn);
-            //printf("is_white_turn && game_state.board[row][col] <= 6 && game_state.board[row][col] >= 1 = %d\n", (game_state.is_white_turn && game_state.board[row][col] <= 6 && game_state.board[row][col] >= 1));
-            //printf("!is_white_turn && game_state.board[row][col] >= 7 && game_state.board[row][col] <= 12 = %d\n", (!game_state.is_white_turn && game_state.board[row][col] >= 7 && game_state.board[row][col] <= 12));
+            printf("is_white_turn && game_state.board[row][col] <= 6 && game_state.board[row][col] >= 1 = %d\n", (game_state.is_white_turn && game_state.board[row][col] <= 6 && game_state.board[row][col] >= 1));
+            printf("!is_white_turn && game_state.board[row][col] >= 7 && game_state.board[row][col] <= 12 = %d\n", (!game_state.is_white_turn && game_state.board[row][col] >= 7 && game_state.board[row][col] <= 12));
             // Si la pièce sélectionnée est de la bonne couleur pour le joueur
             if ((game_state.is_white_turn && game_state.board[row][col] <= 6 && game_state.board[row][col] >= 1) ||
                (!game_state.is_white_turn && game_state.board[row][col] >= 7 && game_state.board[row][col] <= 12)) {
                 // On stocke la position de la pièce sélectionnée
                 selected_piece_x = row;
                 selected_piece_y = col;
-                //printf("After selection : slcted x = %d, slcted y = %d\n", selected_piece_x, selected_piece_y);
+                printf("After selection : slcted x = %d, slcted y = %d\n", selected_piece_x, selected_piece_y);
             }
         }
     // Une bonne pièce a été séléctionnée, row et col sont maintenant la position de la case d'arrivée
@@ -1113,7 +1084,6 @@ void start_client(const char *server_ip) {
                     reverse_board(game_state.board);
                 }
                 printf("Received new Game state from server\n");
-                printf("quit = %d\n", game_state.quit);
 
                 if (!game_state.quit) {
                     // Redessiner l'échiquier après le coup de joueur dont c'est le tour de jouer
@@ -1161,6 +1131,7 @@ void start_client(const char *server_ip) {
                         printf("Plateau envoyé.\n");
 
                         // Si ce joueur a mis game_over
+                        printf("Game over = %d\n", game_state.game_over);
                         if (game_state.game_over) {
                             handle_game_over(renderer);
                             send_game_state_to_server(client_socket, &game_state);
