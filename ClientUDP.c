@@ -75,7 +75,7 @@ void handle_mouse_click(int x, int y, SDL_Renderer *renderer);
 void load_all_textures(SDL_Renderer* renderer);
 void draw_chessboard(SDL_Renderer *renderer);
 void draw_piece(SDL_Renderer *renderer, SDL_Texture *texture, int row, int col);
-void draw_pieces(SDL_Renderer *renderer)
+void draw_pieces(SDL_Renderer *renderer);
 void reverse_board(int board[BOARD_SIZE][BOARD_SIZE]);
 int receive_game_state_from_server(int client_socket, struct sockaddr_in *server_addr);
 void send_game_state_to_server(int client_socket, struct sockaddr_in *server_addr);
