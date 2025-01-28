@@ -74,7 +74,7 @@ Le client 1 joue avec les pièces blanches et le client 2 joue avec les pièces 
 
 Règles du Jeu
 
-Le jeu suit les règles classiques des échecs, y compris les mouvements spéciaux comme le roque et la prise en passant. Les joueurs peuvent promouvoir leurs pions lorsqu'ils atteignent la dernière rangée.
+Le jeu suit les règles classiques des échecs, y compris les mouvements spéciaux comme le roque, la prise en passant, et la promotion de pions.
 
 
 Gestion des Erreurs
@@ -102,10 +102,7 @@ Améliorations Possibles
 
 Auteurs
 
-Ce projet a été développé par Adrien PANGUEL et Mohamed Saad EL ABBADI dans le cadre d'un projet académique.
+Ce projet a été développé par Adrien PANGUEL et Mohamed Saad EL ABBADI dans le cadre d'un projet académique, que j'ai poursuivi pour apporter les dernières finitions, notamment la possibilité de rejouer des parties à l'infini.
 
-Licence
-
-Ce projet est sous licence MIT. Vous êtes libre de l'utiliser, de le modifier et de le distribuer selon les termes de la licence.
 
 Profitez de votre partie d'échecs en réseau !!!
