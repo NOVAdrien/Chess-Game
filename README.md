@@ -28,16 +28,15 @@ Compilation du Serveur
 
 Pour compiler le serveur, utilisez une des commandes suivantes selon le type de connexion TCP ou UDP utilisé :
 
-- gcc ServerUDP.c -o serverudp
 - gcc ServerTCP.c -o servertcp
+- gcc ServerUDP.c -o serverudp
 
 Compilation du Client
 
 Pour compiler le client, utilisez une des commandes suivantes selon le type de connexion TCP ou UDP utilisé :
 
-- gcc ClientUDP.c -o clientudp -lSDL2 -lSDL2_image
-- gcc ClientTCP.c -o clienttcp -lSDL2 -lSDL2_image
-
+- gcc ClientTCP.c -o clienttcp -lSDL2 -lSDL2_image -lSDL2_ttf
+- gcc ClientUDP.c -o clientudp -lSDL2 -lSDL2_image -lSDL2_ttf
 
 Exécution
 
@@ -54,15 +53,15 @@ Lancement des Clients
 
 Lancez le premier client en exécutant une des commandes suivantes selon le type de connexion TCP ou UDP utilisé :
 
-- ./clientudp
 - ./clienttcp
+- ./clientudp
 
 Le client se connectera automatiquement au serveur en utilisant l'adresse IPV4 codée en dur dans le fichier client. Pour trouver cette adresse IP, il faut entrer la commande ifconfig dans le terminal de la machine où le serveur est lancé (dans notre cas "172.26.136.239"), et l'insérer dans le code client dans le main à la ligne "const char *server_ip = "172.26.136.239";".
 
 Lancez le deuxième client de la même manière :
 
-- ./clientudp
 - ./clienttcp
+- ./clientudp
 
 Le deuxième client se connectera au serveur et le jeu commencera.
 
