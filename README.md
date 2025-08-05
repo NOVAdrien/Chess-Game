@@ -1,9 +1,9 @@
-Jeu d'Échecs en Réseau
+# Jeu d'Échecs en Réseau
 
 Ce projet est une implémentation d'un jeu d'échecs en réseau, où deux joueurs peuvent s'affronter à distance. Le jeu est composé d'un code serveur et d'un code client qui permettent la connexion via TCP (Transmission Control Protocol) ou UDP (User Datagram Protocol) de deux joueurs. Le serveur gère la logique du jeu et la communication entre les deux clients, tandis que chaque client gère l'interface graphique et les interactions utilisateur.
 
 
-Prérequis
+## Prérequis
 
 Pour compiler et exécuter ce projet, vous aurez besoin des éléments suivants :
 
@@ -12,7 +12,7 @@ Pour compiler et exécuter ce projet, vous aurez besoin des éléments suivants 
 - Bibliothèques réseau : Les bibliothèques standard pour la gestion des sockets (arpa/inet.h, sys/socket.h).
 
 
-Installation des dépendances
+## Installation des dépendances
 
 Sur une distribution Linux basée sur Debian (comme Ubuntu), vous pouvez installer les dépendances nécessaires avec les commandes suivantes :
 
@@ -22,25 +22,25 @@ Sur une distribution Linux basée sur Debian (comme Ubuntu), vous pouvez install
 Vous avez à votre disposition deux codes que vous pouvez installer. L'un utilise le protocole TCP (ClientTCP.c et ServerTCP.c) et l'autre utilise le protocole UDP (ClientUDP.c et ServerUDP.c).
 
 
-Compilation
+## Compilation
 
-Compilation du Serveur
+### Compilation du Serveur
 
 Pour compiler le serveur, utilisez une des commandes suivantes selon le type de connexion TCP ou UDP utilisé :
 
 - gcc ServerTCP.c -o servertcp
 - gcc ServerUDP.c -o serverudp
 
-Compilation du Client
+### Compilation du Client
 
 Pour compiler le client, utilisez une des commandes suivantes selon le type de connexion TCP ou UDP utilisé :
 
 - gcc ClientTCP.c -o clienttcp -lSDL2 -lSDL2_image -lSDL2_ttf
 - gcc ClientUDP.c -o clientudp -lSDL2 -lSDL2_image -lSDL2_ttf
 
-Exécution
+## Exécution
 
-Lancement du Serveur
+### Lancement du Serveur
 
 Lancez le serveur en exécutant une des commandes suivantes selon le type de connexion TCP ou UDP utilisé :
 
@@ -49,7 +49,7 @@ Lancez le serveur en exécutant une des commandes suivantes selon le type de con
 
 Le serveur écoutera sur le port 30000 et attendra que deux clients se connectent.
 
-Lancement des Clients
+### Lancement des Clients
 
 Lancez le premier client en exécutant une des commandes suivantes selon le type de connexion TCP ou UDP utilisé :
 
@@ -66,27 +66,27 @@ Lancez le deuxième client de la même manière :
 Le deuxième client se connectera au serveur et le jeu commencera.
 
 
-Fonctionnement du Jeu
+## Fonctionnement du Jeu
 
 Le client 1 joue avec les pièces blanches et le client 2 joue avec les pièces noires. Les joueurs alternent les tours pour déplacer leurs pièces. Le serveur gère la synchronisation des mouvements entre les deux clients.
 
 
-Règles du Jeu
+## Règles du Jeu
 
 Le jeu suit les règles classiques des échecs, y compris les mouvements spéciaux comme le roque, la prise en passant, et la promotion de pions.
 
 
-Gestion des Erreurs
+## Gestion des Erreurs
 
 Si un client se déconnecte, le serveur en informe l'autre client et met fin à la partie. Si le serveur rencontre une erreur lors de la communication, il ferme les connexions et termine proprement.
 
 
-Nettoyage
+## Nettoyage
 
 Après la fin de la partie, le serveur et les clients ferment leurs sockets et libèrent les ressources.
 
 
-Améliorations Possibles
+## Améliorations Possibles
 
 - Interface graphique améliorée : Ajouter des animations, des effets sonores.
 
@@ -99,9 +99,9 @@ Améliorations Possibles
 - Challenge dans le jeu : Ajouter un temps de jeu limité pour chaque joueur.
 
 
-Auteurs
+## Auteurs
 
-Ce projet a été développé par Adrien PANGUEL et Mohamed Saad EL ABBADI dans le cadre d'un projet académique, que j'ai poursuivi pour apporter les dernières finitions, notamment la possibilité de rejouer des parties à l'infini.
+Ce projet a été développé par Mohamed Saad EL ABBADI et moi-même, Adrien PANGUEL, dans le cadre d'un projet académique, que j'ai poursuivi pour apporter les dernières finitions, notamment la possibilité de rejouer des parties à l'infini.
 
 
 Profitez de votre partie d'échecs en réseau !!!
